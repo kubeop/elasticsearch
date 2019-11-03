@@ -1,0 +1,103 @@
+{% if es_cluster_name is not defined %}
+cluster.name: elasticsearch
+{% endif %}
+
+node.name: ${HOSTNAME}
+
+{% if role == "master" %}
+node.master: true
+node.data: false
+{% endif %}
+
+{% if role == "client" %}
+node.master: false
+node.data: false
+{% endif %}
+
+{% if role == "data" and type == "data" %}
+node.master: false
+node.data: true
+{% endif %}
+
+{% if role == "data" and type == "hot" %}
+node.master: false
+node.data: true
+node.attr.box_type: hot
+{% endif %}
+
+{% if role == "data" and type == "cold" %}
+node.master: false
+node.data: true
+node.attr.box_type: cold
+{% endif %}
+
+node.attr.zone: "shanghai"
+node.max_local_storage_nodes: 1
+
+{% if role == "data" %}
+path.data: {{ es_data_dirs | array_to_str }}
+{% else %}
+path.data: {{ es_data_dirs[0] }}
+{% endif %}
+
+path.logs: {{ es_log_dir }}
+
+{% if es_path_repo is defined %}
+path.repo: {{ es_path_repo }}
+{% endif %}
+
+bootstrap.memory_lock: true
+
+http.host: 0.0.0.0
+http.port: 9200
+http.max_content_length: 100mb
+http.max_initial_line_length: 4kb
+http.max_header_size: 8kb
+http.compression: true
+
+network.host: 0.0.0.0
+
+transport.host: 0.0.0.0
+transport.tcp.connect_timeout: 30s
+transport.ping_schedule: 5s
+transport.tcp.port: 9300
+transport.publish_port: 9300
+transport.tcp.compress: true
+
+discovery.seed_hosts: [{% for host in groups['master'] %}"{{ host }}"{% if not loop.last %},{% endif %}{% endfor %}]
+
+cluster.initial_master_nodes: [{% for host in groups['master'] %}"{{ host }}"{% if not loop.last %},{% endif %}{% endfor %}]
+
+
+discovery.zen.join_timeout: 10s
+discovery.zen.minimum_master_nodes: 2
+discovery.zen.ping_timeout: 100s
+discovery.zen.fd.ping_timeout: 100s
+
+gateway.expected_nodes: 2
+gateway.recover_after_nodes: 3
+gateway.recover_after_time: 10m
+
+action.destructive_requires_name: true
+
+indices.recovery.max_bytes_per_sec: 60mb
+indices.fielddata.cache.size: 30%
+indices.breaker.fielddata.limit: 60%
+indices.breaker.request.limit: 40%
+indices.breaker.total.limit: 75%
+indices.breaker.total.use_real_memory: true
+
+cluster.routing.allocation.disk.threshold_enabled: true
+cluster.routing.allocation.disk.watermark.low: 90%
+cluster.routing.allocation.disk.watermark.high: 90%
+cluster.routing.allocation.node_concurrent_recoveries: 3
+cluster.routing.allocation.node_initial_primaries_recoveries: 10
+cluster.routing.allocation.awareness.force.zone.values: ["shanghai"]
+cluster.routing.allocation.awareness.attributes: zone
+
+{% if es_action_auto_create_index == true %}
+action.auto_create_index: true
+{% else %}
+action.auto_create_index: false
+{% endif %}
+

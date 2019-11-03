@@ -1,0 +1,12 @@
+
+- name: reload systemd configuration
+  become: yes
+  systemd:
+    daemon_reload: true
+
+- name: restart elasticsearch
+  systemd:
+    name: elasticsearch
+    state: restarted
+    enabled: yes
+  register: es_restarted

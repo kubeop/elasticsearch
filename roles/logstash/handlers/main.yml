@@ -1,0 +1,6 @@
+- name: restart logstash
+  systemd:
+    name: logstash
+    state: restarted
+    enabled: yes
+  register: logstash_restarted

@@ -1,0 +1,121 @@
+- name: fail when hostname is not specified
+  fail:
+    msg: "hostname not specified"
+  when:
+    - hostname is not defined
+- name: fail when heap size is not specified
+  fail:
+    msg: "heap_size not specified"
+  when:
+    - heap_size is not defined
+- name: "修改主机名"
+  hostname:
+    name: "{{ hostname|quote }}"
+  tags: hostname
+- name: "关闭selinux"
+  selinux:
+    state: disabled
+  tags: selinux
+- name: "关闭防火墙"
+  systemd:
+    name: firewalld
+    enabled: no
+    state: stopped
+  tags: iptables
+- name: "添加ELK软件源"
+  yum_repository:
+    file: epel
+    name: epel
+    description: ELK repository for 7.x packages
+    baseurl: "https://mirrors.tuna.tsinghua.edu.cn/elasticstack/7.x/yum/"
+    gpgcheck: no
+    enabled: yes
+  tags: repo
+- name: "添加elasticsearch组"
+  group:
+    name: "{{ es_group }}"
+    gid: "{{ es_group_id }}"
+    system: yes
+    state: present
+  tags: group
+- name: "添加elasticsearch用户"
+  user:
+    name: "{{ es_user }}"
+    uid: "{{ es_user_id }}"
+    group: "{{ es_group }}"
+    createhome: no
+    comment: elasticsearch system user
+    system: yes
+    state: present
+  tags: user
+- name: "更改系统limits"
+  pam_limits:
+    dest: "/etc/security/limits.conf"
+    domain: '{{ item.limit_domain }}'
+    limit_type: "{{ item.limit_type }}"
+    limit_item: "{{ item.limit_item }}"
+    value: "{{ item.value }}"
+  with_items:
+    - { limit_domain: 'elasticsearch',limit_type: 'soft',limit_item: 'memlock', value: 'unlimited' }
+    - { limit_domain: 'elasticsearch',limit_type: 'hard',limit_item: 'memlock', value: 'unlimited' }
+  tags: limits
+- name: "修改内核参数"
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    ignoreerrors: yes
+    reload: yes
+  with_items:
+    - {name: 'vm.max_map_count',value: '262144' }
+  tags: sysctl
+- name: "创建elasticsearch目录"
+  file:
+    path: "{{ item }}"
+    owner: "{{ es_user }}"
+    group: "{{ es_group }}"
+    mode: "2750"
+    state: directory
+  with_items:
+    - "{{ es_log_dir }}"
+    - "{{ es_data_dirs }}"
+  tags: dir
+- name: "安装elasticsearch"
+  yum:
+    name: '{{ es_package_name }}{% if es_version is defined and es_version != ""  %}-{{ es_version }}{% endif %}'
+    update_cache: yes
+    state: present
+- name: "修改ElasticSearch Systemd"
+  block:
+    - name: ElasticSearch Systemd
+      ini_file:
+        path: "/usr/lib/systemd/system/elasticsearch.service"
+        section: Service
+        option: LimitMEMLOCK
+        value: infinity
+        mode: 0644
+      notify:
+        - reload systemd configuration
+        - restart elasticsearch
+- name: "修改jvm.options"
+  template:
+    src: "jvm.options.j2"
+    dest: "/etc/elasticsearch/jvm.options"
+    owner: "{{ es_user }}"
+    group: "{{ es_group }}"
+    mode: "0660"
+    force: yes
+    backup: yes
+  notify: restart elasticsearch
+  tags: jvm
+- name: "修改配置文件"
+  template:
+    src: "elasticsearch.yml.j2"
+    dest: "/etc/elasticsearch/elasticsearch.yml"
+    owner: "{{ es_user }}"
+    group: "{{ es_group }}"
+    mode: "0660"
+    force: yes
+    backup: yes
+  notify: restart elasticsearch
+  tags: conf

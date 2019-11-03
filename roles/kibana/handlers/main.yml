@@ -1,0 +1,6 @@
+- name: restart kibana
+  systemd:
+    name: kibana
+    state: restarted
+    enabled: yes
+  register: kibana_restarted

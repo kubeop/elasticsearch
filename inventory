@@ -1,0 +1,42 @@
+[master]
+10.10.90.100 hostname=es-master-01 role=master heap_size=16g
+10.10.90.101 hostname=es-master-02 role=master heap_size=16g
+10.10.90.102 hostname=es-master-03 role=master heap_size=16g
+[client]
+10.10.90.103 hostname=es-client-01 role=client heap_size=16g
+10.10.90.104 hostname=es-client-02 role=client heap_size=16g
+10.10.90.105 hostname=es-client-03 role=client heap_size=16g
+[hot]
+10.10.90.106 hostname=es-data-hot-01 role=data heap_size=32g
+10.10.90.107 hostname=es-data-hot-02 role=data heap_size=32g
+10.10.90.108 hostname=es-data-hot-03 role=data heap_size=32g
+[hot:vars]
+type=hot
+
+[cold]
+10.10.90.109 hostname=es-data-cold-01 role=data heap_size=32g
+10.10.90.110 hostname=es-data-cold-02 role=data heap_size=32g
+10.10.90.111 hostname=es-data-cold-03 role=data heap_size=32g
+[cold:vars]
+type=cold
+
+[es:children]
+master
+client
+hot
+cold
+
+[logstash]
+10.10.90.112 hostname=logstash-01 heap_size=16g
+10.10.90.113 hostname=logstash-02 heap_size=16g
+10.10.90.114 hostname=logstash-03 heap_size=16g
+
+[kibana]
+10.10.90.121 hostname=kibana-01
+10.10.90.122 hostname=kibana-02
+
+[kafka]
+10.10.90.115 hostname=kafka-01
+10.10.90.116 hostname=kafka-02
+10.10.90.117 hostname=kafka-03
+
