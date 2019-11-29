@@ -74,9 +74,7 @@ discovery.zen.minimum_master_nodes: 2
 discovery.zen.ping_timeout: 100s
 discovery.zen.fd.ping_timeout: 100s
 
-gateway.expected_nodes: 2
-gateway.recover_after_nodes: 3
-gateway.recover_after_time: 10m
+thread_pool.write.queue_size: 1000
 
 action.destructive_requires_name: true
 
@@ -100,4 +98,3 @@ action.auto_create_index: true
 {% else %}
 action.auto_create_index: false
 {% endif %}
-
