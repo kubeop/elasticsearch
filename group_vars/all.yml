@@ -1,5 +1,5 @@
 ---
-es_version: "7.4.0"
+es_version: "7.4.2"
 es_enable_xpack: true
 es_package_name: "elasticsearch"
 es_user: elasticsearch
@@ -19,7 +19,7 @@ es_action_auto_create_index: true
 
 
 #logstash
-logstash_version: "7.4.0"
+logstash_version: "7.4.2"
 logstash_package_name: "logstash"
 logstash_user: logstash
 logstash_user_id: 299

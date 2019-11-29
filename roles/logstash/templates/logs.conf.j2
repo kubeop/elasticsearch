@@ -20,7 +20,7 @@ filter {
 output {
   elasticsearch {
     hosts => [{% for host in groups['client'] %}"http://{{ host }}:9200"{% if not loop.last %},{% endif %}{% endfor %}]
-    index => "logs-%{[@metadata][topic]}-%{+YYYY-MM-dd}"
+    index => "%{[@metadata][topic]}-%{[kubernetes][namespace]}-%{[kubernetes][container][name]}-%{local_date}"
     timeout => 300
   }
 }
