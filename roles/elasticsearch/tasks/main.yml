@@ -33,16 +33,16 @@
   tags: repo
 - name: "添加elasticsearch组"
   group:
-    name: "{{ es_group }}"
-    gid: "{{ es_group_id }}"
+    name: "elasticsearch"
+    gid: "300"
     system: yes
     state: present
   tags: group
 - name: "添加elasticsearch用户"
   user:
-    name: "{{ es_user }}"
-    uid: "{{ es_user_id }}"
-    group: "{{ es_group }}"
+    name: "elasticsearch"
+    uid: "300"
+    group: "300"
     createhome: no
     comment: elasticsearch system user
     system: yes
@@ -72,8 +72,8 @@
 - name: "创建elasticsearch目录"
   file:
     path: "{{ item }}"
-    owner: "{{ es_user }}"
-    group: "{{ es_group }}"
+    owner: "elasticsearch"
+    group: "elasticsearch"
     mode: "2750"
     state: directory
   with_items:
@@ -82,7 +82,7 @@
   tags: dir
 - name: "安装elasticsearch"
   yum:
-    name: '{{ es_package_name }}{% if es_version is defined and es_version != ""  %}-{{ es_version }}{% endif %}'
+    name: 'elasticsearch{% if version is defined and version != ""  %}-{{ version }}{% endif %}'
     update_cache: yes
     state: present
 - name: "修改ElasticSearch Systemd"
@@ -101,8 +101,8 @@
   template:
     src: "jvm.options.j2"
     dest: "/etc/elasticsearch/jvm.options"
-    owner: "{{ es_user }}"
-    group: "{{ es_group }}"
+    owner: "elasticsearch"
+    group: "elasticsearch"
     mode: "0660"
     force: yes
     backup: yes
@@ -112,8 +112,8 @@
   template:
     src: "elasticsearch.yml.j2"
     dest: "/etc/elasticsearch/elasticsearch.yml"
-    owner: "{{ es_user }}"
-    group: "{{ es_group }}"
+    owner: "elasticsearch"
+    group: "elasticsearch"
     mode: "0660"
     force: yes
     backup: yes

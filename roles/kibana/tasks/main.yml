@@ -38,7 +38,7 @@
   tags: sysctl
 - name: "安装kibana"
   yum:
-    name: '{{ kibana_package_name }}{% if kibana_version is defined and kibana_version != ""  %}-{{ kibana_version }}{% endif %}'
+    name: 'kibana{% if version is defined and version != ""  %}-{{ version }}{% endif %}'
     update_cache: yes
     state: present
 - name: "修改配置文件"

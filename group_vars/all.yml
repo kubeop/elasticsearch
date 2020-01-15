@@ -1,11 +1,5 @@
 ---
-es_version: "7.4.2"
-es_enable_xpack: true
-es_package_name: "elasticsearch"
-es_user: elasticsearch
-es_user_id: 300
-es_group: elasticsearch
-es_group_id: 300
+version: "7.5.1"
 
 es_cluster_name: es
 es_use_g1gc: true
@@ -19,17 +13,8 @@ es_action_auto_create_index: true
 
 
 #logstash
-logstash_version: "7.4.2"
-logstash_package_name: "logstash"
-logstash_user: logstash
-logstash_user_id: 299
-logstash_group: logstash
-logstash_group_id: 299
-
 logstash_use_g1gc: true
 logstash_data_dir: /data/logstash
 logstash_log_dir: /var/log/logstash
 
 #kibana
-kibana_version: "7.4.0"
-kibana_package_name: "kibana"
