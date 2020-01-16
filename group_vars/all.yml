@@ -3,6 +3,7 @@ version: "7.5.1"
 
 es_cluster_name: es
 es_use_g1gc: true
+es_tls: true
 #第一个目录为所有节点使用，仅数据节点使用所用目录
 es_data_dirs:
   - "/data/elasticsearch"

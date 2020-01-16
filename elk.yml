@@ -1,4 +1,10 @@
 ---
+- name: "签发证书"
+  hosts: localhost
+  connection: local
+  roles:
+    - { role: 'cert', tags: "cert" ,when: "ansible_os_family == 'RedHat' and es_tls == true"}
+
 - name: "安装elasticsearch"
   hosts: es
   roles:

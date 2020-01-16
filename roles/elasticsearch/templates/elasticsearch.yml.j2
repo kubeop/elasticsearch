@@ -6,27 +6,32 @@ node.name: ${HOSTNAME}
 
 {% if role == "master" %}
 node.master: true
+node.ingest: false
 node.data: false
 {% endif %}
 
 {% if role == "client" %}
 node.master: false
+node.ingest: true
 node.data: false
 {% endif %}
 
 {% if role == "data" and type == "data" %}
 node.master: false
+node.ingest: false
 node.data: true
 {% endif %}
 
 {% if role == "data" and type == "hot" %}
 node.master: false
+node.ingest: false
 node.data: true
 node.attr.box_type: hot
 {% endif %}
 
 {% if role == "data" and type == "cold" %}
 node.master: false
+node.ingest: false
 node.data: true
 node.attr.box_type: cold
 {% endif %}
@@ -97,4 +102,13 @@ cluster.routing.allocation.awareness.attributes: zone
 action.auto_create_index: true
 {% else %}
 action.auto_create_index: false
+{% endif %}
+
+{% if es_tls == true %}
+xpack.security.enabled: true
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: full
+xpack.security.transport.ssl.key: certs/es.key
+xpack.security.transport.ssl.certificate: certs/es.pem
+xpack.security.transport.ssl.certificate_authorities: [ "certs/ca.pem" ]
 {% endif %}

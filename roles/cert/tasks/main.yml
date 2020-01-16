@@ -1,0 +1,83 @@
+- name: "创建ssl证书目录"
+  file:
+    path: "{{ ssl_dir }}"
+    state: directory
+
+- stat:
+    path: "{{ ssl_dir }}/ca.key"
+  register: ca_key
+- name: "Generate CA private key"
+  when: not ca_key.stat.exists
+  openssl_privatekey:
+    path: "{{ ssl_dir }}/ca.key"
+    type: RSA
+    size: 4096
+- stat:
+    path: "{{ ssl_dir }}/ca.csr"
+  register: ca_csr
+- name: "Generate CA request"
+  when: not ca_csr.stat.exists
+  openssl_csr:
+    path: "{{ ssl_dir }}/ca.csr"
+    privatekey_path: "{{ ssl_dir }}/ca.key"
+    use_common_name_for_san: no
+    country_name: CN
+    state_or_province_name: Shanghai
+    locality_name: Shanghai
+    organization_name: k8sre
+    common_name: elastic
+    basic_constraints_critical: yes
+    basic_constraints:
+      - CA:TRUE
+
+- stat:
+    path: "{{ ssl_dir }}/ca.pem"
+  register: ca_pem
+- name: "Generate CA certificate"
+  when: not ca_pem.stat.exists
+  openssl_certificate:
+    path: "{{ ssl_dir }}/ca.pem"
+    provider: selfsigned
+    privatekey_path: "{{ ssl_dir }}/ca.key"
+    csr_path: "{{ ssl_dir }}/ca.csr"
+
+- stat:
+    path: "{{ ssl_dir }}/es.key"
+  register: es_key
+- name: "Generate private key"
+  when: not es_key.stat.exists
+  openssl_privatekey:
+    path: "{{ ssl_dir }}/es.key"
+    type: RSA
+    size: 4096
+
+- stat:
+    path: "{{ ssl_dir }}/es.csr"
+  register: es_csr
+- name: "Generate request"
+  when: not es_csr.stat.exists
+  openssl_csr:
+    path: "{{ ssl_dir }}/es.csr"
+    privatekey_path: "{{ ssl_dir }}/es.key"
+    country_name: CN
+    state_or_province_name: Shanghai
+    locality_name: Shanghai
+    organization_name: k8sre
+    common_name: elastic
+    key_usage_critical: yes
+    subject_alt_name: "{{ item | map('regex_replace', '^', 'IP:') | list }}"
+  with_list:
+    - "{{ groups['es'] }}"
+
+- stat:
+    path: "{{ ssl_dir }}/es.pem"
+  register: es_pem
+- name: "Generate certificate"
+  when: not es_pem.stat.exists
+  openssl_certificate:
+    path: "{{ ssl_dir }}/es.pem"
+    provider: ownca
+    privatekey_path: "{{ ssl_dir }}/es.key"
+    csr_path: "{{ ssl_dir }}/es.csr"
+    ownca_path: "{{ ssl_dir }}/ca.pem"
+    ownca_privatekey_path: "{{ ssl_dir }}/ca.key"
