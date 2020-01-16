@@ -1,4 +1,5 @@
 ---
+ssl_dir: /etc/ssl/es
 version: "7.5.1"
 
 es_cluster_name: es

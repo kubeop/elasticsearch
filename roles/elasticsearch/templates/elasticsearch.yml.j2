@@ -1,5 +1,7 @@
 {% if es_cluster_name is not defined %}
 cluster.name: elasticsearch
+{% else %}
+cluster.name: {{ es_cluster_name }}
 {% endif %}
 
 node.name: ${HOSTNAME}
