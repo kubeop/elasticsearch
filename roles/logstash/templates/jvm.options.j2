@@ -22,7 +22,7 @@
 ################################################################
 
 ## GC configuration
-{% if logstash_use_g1gc == true %}
+{% if es_use_g1gc == true %}
 -XX:+UseG1GC
 -XX:MaxGCPauseMillis=200
 {% else %}

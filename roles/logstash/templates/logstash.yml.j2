@@ -1,5 +1,5 @@
 # node.name: test
-path.data: {{ logstash_data_dir }}
+path.data: /var/lib/logstash
 # pipeline.id: main
 # pipeline.workers: 2
 pipeline.batch.size: 1000
@@ -39,5 +39,6 @@ pipeline.batch.size: 1000
 #
 log.level: info
 log.format: json
-path.logs: {{ logstash_log_dir }}
+path.logs: /var/log/logstash
 # path.plugins: []
+# pipeline.separate_logs: false

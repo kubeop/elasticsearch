@@ -58,17 +58,6 @@
   with_items:
     - {name: 'vm.max_map_count',value: '262144' }
   tags: sysctl
-- name: "创建logstash目录"
-  file:
-    path: "{{ item }}"
-    owner: "logstash"
-    group: "logstash"
-    mode: "2750"
-    state: directory
-  with_items:
-    - "{{ logstash_log_dir }}"
-    - "{{ logstash_data_dir }}"
-  tags: dir
 - name: "安装JDK"
   yum:
     name: "java-1.8.0-openjdk"

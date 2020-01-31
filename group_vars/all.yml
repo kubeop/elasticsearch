@@ -12,11 +12,3 @@ es_data_dirs:
   - "/data2/elasticsearch"
 es_log_dir: "/var/log/elasticsearch"
 es_action_auto_create_index: true
-
-
-#logstash
-logstash_use_g1gc: true
-logstash_data_dir: /data/logstash
-logstash_log_dir: /var/log/logstash
-
-#kibana
