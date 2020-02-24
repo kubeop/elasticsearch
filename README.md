@@ -59,7 +59,7 @@ pip install netaddr
 先执行格式化磁盘并挂载目录。如已经自行格式化磁盘并挂载，请跳过此步骤。
 
 ```
-ansible-playbook fdisk.yml -i inventory -l data -e "disk=/dev/sdb dir=/data/elasticsearch"
+ansible-playbook fdisk.yml -i inventory -l data -e "disk=/dev/sdb dir=/data"
 ```
 安装elasticsearch
 ```

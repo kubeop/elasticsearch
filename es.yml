@@ -1,4 +1,9 @@
 ---
+- name: "初始化"
+  hosts: es
+  roles:
+    - { role: 'init', tags: "init" ,when: "ansible_os_family == 'RedHat'"}
+
 - name: "签发证书"
   hosts: localhost
   connection: local

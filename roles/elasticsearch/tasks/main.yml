@@ -1,27 +1,3 @@
-- name: fail when hostname is not specified
-  fail:
-    msg: "hostname not specified"
-  when:
-    - hostname is not defined
-- name: fail when heap size is not specified
-  fail:
-    msg: "heap_size not specified"
-  when:
-    - heap_size is not defined
-- name: "修改主机名"
-  hostname:
-    name: "{{ hostname|quote }}"
-  tags: hostname
-- name: "关闭selinux"
-  selinux:
-    state: disabled
-  tags: selinux
-- name: "关闭防火墙"
-  systemd:
-    name: firewalld
-    enabled: no
-    state: stopped
-  tags: iptables
 - name: "添加ELK软件源"
   yum_repository:
     file: epel
