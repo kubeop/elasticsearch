@@ -24,38 +24,6 @@
     system: yes
     state: present
   tags: user
-- name: "更改系统limits"
-  pam_limits:
-    dest: "/etc/security/limits.conf"
-    domain: '{{ item.limit_domain }}'
-    limit_type: "{{ item.limit_type }}"
-    limit_item: "{{ item.limit_item }}"
-    value: "{{ item.value }}"
-  with_items:
-    - { limit_domain: 'elasticsearch',limit_type: 'soft',limit_item: 'memlock', value: 'unlimited' }
-    - { limit_domain: 'elasticsearch',limit_type: 'hard',limit_item: 'memlock', value: 'unlimited' }
-  tags: limits
-- name: "修改内核参数"
-  sysctl:
-    name: "{{ item.name }}"
-    value: "{{ item.value }}"
-    state: present
-    ignoreerrors: yes
-    reload: yes
-  with_items:
-    - {name: 'vm.max_map_count',value: '262144' }
-  tags: sysctl
-- name: "创建elasticsearch目录"
-  file:
-    path: "{{ item }}"
-    owner: "elasticsearch"
-    group: "elasticsearch"
-    mode: "2750"
-    state: directory
-  with_items:
-    - "{{ es_log_dir }}"
-    - "{{ es_data_dirs }}"
-  tags: dir
 - name: "安装elasticsearch"
   yum:
     name: 'elasticsearch{% if version is defined and version != ""  %}-{{ version }}{% endif %}'
@@ -84,6 +52,26 @@
     backup: yes
   notify: restart elasticsearch
   tags: jvm
+- name: "创建elasticsearch目录"
+  file:
+    path: "{{ item }}"
+    owner: "elasticsearch"
+    group: "elasticsearch"
+    mode: "2750"
+    state: directory
+  with_items:
+    - "{{ es_log_dir }}"
+    - "{{ es_data_dirs }}"
+    - "/etc/elasticsearch/certs"
+  tags: dir,dis_certs
+- name: "拷贝elasticsearch证书"
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+     - {src: '{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.key',dest: '/etc/elasticsearch/certs/{{ ansible_hostname }}.key'}
+     - {src: '{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.pem',dest: '/etc/elasticsearch/certs/{{ ansible_hostname }}.pem'}
+  tags: dis_certs
 - name: "修改配置文件"
   template:
     src: "elasticsearch.yml.j2"
