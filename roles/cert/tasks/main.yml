@@ -43,7 +43,7 @@
 
 - stat:
     path: "{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.key"
-  register: {{ ansible_default_ipv4.address }}_key
+  register: "{{ ansible_default_ipv4.address }}"_key
 - name: "Generate private key"
   when: not {{ ansible_default_ipv4.address }}_key.stat.exists
   openssl_privatekey:
@@ -55,7 +55,7 @@
 
 - stat:
     path: "{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.csr"
-  register: {{ ansible_default_ipv4.address }}_csr
+  register: "{{ ansible_default_ipv4.address }}"_csr
 - name: "Generate request"
   when: not {{ ansible_default_ipv4.address }}_csr.stat.exists
   openssl_csr:
@@ -73,7 +73,7 @@
 
 - stat:
     path: "{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.pem"
-  register: {{ ansible_default_ipv4.address }}_pem
+  register: "{{ ansible_default_ipv4.address }}"_pem
 - name: "Generate certificate"
   when: not {{ ansible_default_ipv4.address }}_pem.stat.exists
   openssl_certificate:
