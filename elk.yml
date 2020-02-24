@@ -9,13 +9,3 @@
   hosts: es
   roles:
     - { role: 'elasticsearch', tags: "elasticsearch" ,when: "ansible_os_family == 'RedHat'"}
-
-- name: "安装logstash"
-  hosts: logstash
-  roles:
-    - { role: 'logstash', tags: "logstash" ,when: "ansible_os_family == 'RedHat'"}
-
-- name: "kibana"
-  hosts: kibana
-  roles:
-    - { role: 'kibana', tags: "kibana" ,when: "ansible_os_family == 'RedHat'"}

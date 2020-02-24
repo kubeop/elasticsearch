@@ -26,17 +26,3 @@ client
 hot
 cold
 
-[logstash]
-10.10.90.112 hostname=logstash-01 heap_size=16g
-10.10.90.113 hostname=logstash-02 heap_size=16g
-10.10.90.114 hostname=logstash-03 heap_size=16g
-
-[kibana]
-10.10.90.121 hostname=kibana-01
-10.10.90.122 hostname=kibana-02
-
-[kafka]
-10.10.90.115 hostname=kafka-01
-10.10.90.116 hostname=kafka-02
-10.10.90.117 hostname=kafka-03
-

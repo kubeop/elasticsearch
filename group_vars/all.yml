@@ -1,6 +1,6 @@
 ---
 ssl_dir: /etc/ssl/es
-version: "7.5.1"
+version: "7.6.0"
 
 es_cluster_name: es
 es_use_g1gc: true
