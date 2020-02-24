@@ -29,6 +29,7 @@
     name: 'elasticsearch{% if version is defined and version != ""  %}-{{ version }}{% endif %}'
     update_cache: yes
     state: present
+  tags: install_es
 - name: "修改ElasticSearch Systemd"
   block:
     - name: ElasticSearch Systemd
@@ -69,8 +70,9 @@
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
   with_items:
-     - {src: '{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.key',dest: '/etc/elasticsearch/certs/{{ ansible_hostname }}.key'}
-     - {src: '{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.pem',dest: '/etc/elasticsearch/certs/{{ ansible_hostname }}.pem'}
+     - {src: '{{ ssl_dir }}/ca.pem', dest: '/etc/elasticsearch/certs/ca.pem'}
+     - {src: '{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.key', dest: '/etc/elasticsearch/certs/{{ ansible_hostname }}.key'}
+     - {src: '{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.pem', dest: '/etc/elasticsearch/certs/{{ ansible_hostname }}.pem'}
   tags: dis_certs
 - name: "修改配置文件"
   template:

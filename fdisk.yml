@@ -3,7 +3,7 @@
   hosts: all
   vars:
     disk: /dev/sdb
-    dir: /data/elasticsearch
+    dir: /data
   tasks:
     - stat:
         path: "{{ disk }}1"

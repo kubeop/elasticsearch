@@ -41,47 +41,36 @@
     privatekey_path: "{{ ssl_dir }}/ca.key"
     csr_path: "{{ ssl_dir }}/ca.csr"
 
-- stat:
-    path: "{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.key"
-  register: "{{ ansible_default_ipv4.address }}"_key
+
 - name: "Generate private key"
-  when: not {{ ansible_default_ipv4.address }}_key.stat.exists
   openssl_privatekey:
-    path: "{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.key"
+    path: "{{ ssl_dir }}/{{ item }}.key"
     type: RSA
     size: 4096
-  with_list:
+  with_items:
     - "{{ groups['es'] }}"
 
-- stat:
-    path: "{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.csr"
-  register: "{{ ansible_default_ipv4.address }}"_csr
 - name: "Generate request"
-  when: not {{ ansible_default_ipv4.address }}_csr.stat.exists
   openssl_csr:
-    path: "{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.csr"
-    privatekey_path: "{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.key"
+    path: "{{ ssl_dir }}/{{ item }}.csr"
+    privatekey_path: "{{ ssl_dir }}/{{ item }}.key"
     country_name: CN
     state_or_province_name: Shanghai
     locality_name: Shanghai
     organization_name: k8sre
     common_name: elastic
     key_usage_critical: yes
-    subject_alt_name: "{{ item | map('regex_replace', '^', 'IP:') }}"
-  with_list:
+    subject_alt_name: "{{ item | regex_replace('^', 'IP:') }}"
+  with_items:
     - "{{ groups['es'] }}"
 
-- stat:
-    path: "{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.pem"
-  register: "{{ ansible_default_ipv4.address }}"_pem
 - name: "Generate certificate"
-  when: not {{ ansible_default_ipv4.address }}_pem.stat.exists
   openssl_certificate:
-    path: "{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.pem"
+    path: "{{ ssl_dir }}/{{ item }}.pem"
     provider: ownca
-    privatekey_path: "{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.key"
-    csr_path: "{{ ssl_dir }}/{{ ansible_default_ipv4.address }}.csr"
+    privatekey_path: "{{ ssl_dir }}/{{ item }}.key"
+    csr_path: "{{ ssl_dir }}/{{ item }}.csr"
     ownca_path: "{{ ssl_dir }}/ca.pem"
     ownca_privatekey_path: "{{ ssl_dir }}/ca.key"
-  with_list:
+  with_items:
     - "{{ groups['es'] }}"

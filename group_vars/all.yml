@@ -8,7 +8,5 @@ es_tls: true
 #第一个目录为所有节点使用，仅数据节点使用所用目录
 es_data_dirs:
   - "/data/elasticsearch"
-  - "/data1/elasticsearch"
-  - "/data2/elasticsearch"
 es_log_dir: "/var/log/elasticsearch"
 es_action_auto_create_index: true

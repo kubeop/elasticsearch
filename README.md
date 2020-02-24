@@ -89,30 +89,88 @@ ansible-playbook es.yml -i inventory
 扩容时，请不要在inventory文件master组中保留旧服务器信息。
 
 ```
-
-```
-
-#### 4.4、扩容client节点
-
-```
-
-```
-
-#### 4.5、扩容data节点
-
-```
-
+ansible-playbook es.yml -i inventory -l master
 ```
 
 
 
-#### 4.5、替换集群证书
+#### 2.4、扩容client节点
+
+扩容时，请不要在inventory文件master组中保留旧服务器信息。
 
 ```
-
+ansible-playbook es.yml -i inventory -l client
 ```
 
 
 
-#### 4.6、升级elasticsearch版本
+#### 2.5、扩容data节点
+
+扩容时，请不要在inventory文件hot或cold组中保留旧服务器信息。
+
+扩容普通数据节点
+
+```
+ansible-playbook es.yml -i inventory -l data
+```
+
+扩容热数据节点
+
+```
+ansible-playbook es.yml -i inventory -l hot
+```
+
+扩容冷数据节点
+
+```
+ansible-playbook es.yml -i inventory -l cold
+```
+
+
+
+#### 2.5、替换集群证书
+
+生成证书
+
+```
+ansible-playbook es.yml -i inventory -t cert
+```
+
+拷贝证书
+
+```
+ansible-playbook es.yml -i inventory -t dis_certs
+```
+
+重启服务
+
+```
+ansible -i inventory all -m systemd -a "name=elasticsearch state=restarted"
+```
+
+
+
+#### 2.6、升级elasticsearch版本
+
+在升级之前请关闭logstash等写es的应用，并禁用分片分配。在升级完成再进行开启。
+
+停止elasticsearch服务
+
+```
+ansible -i inventory all -m systemd -a "name=elasticsearch state=stopped"
+```
+
+安装新版本
+
+```
+ansible-playbook es.yml -i inventory -t install_es
+```
+
+- 如有安装插件，在先进行插件升级
+
+启动服务
+
+```
+ansible -i inventory all -m systemd -a "name=elasticsearch state=started"
+```
 
