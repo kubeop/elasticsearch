@@ -110,7 +110,7 @@ action.auto_create_index: false
 xpack.security.enabled: true
 xpack.security.transport.ssl.enabled: true
 xpack.security.transport.ssl.verification_mode: full
-xpack.security.transport.ssl.key: certs/es.key
-xpack.security.transport.ssl.certificate: certs/es.pem
+xpack.security.transport.ssl.key: certs/${node.name}.key
+xpack.security.transport.ssl.certificate: certs/${node.name}.pem
 xpack.security.transport.ssl.certificate_authorities: [ "certs/ca.pem" ]
 {% endif %}
