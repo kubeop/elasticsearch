@@ -40,7 +40,6 @@
         value: infinity
         mode: 0644
       notify:
-        - reload systemd configuration
         - restart elasticsearch
 - name: "修改jvm.options"
   template:
